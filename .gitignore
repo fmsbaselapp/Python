@@ -1,0 +1,8 @@
+#firebase connection
+ServiceAccount.json
+ServiceAccountTest.json
+
+#Other Files
+.idea
+.vscode
+
