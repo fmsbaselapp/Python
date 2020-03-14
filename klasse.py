@@ -136,6 +136,7 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
                         zeichen = 1  # setzt while loop unten zurück
                         # Liest zusammengesetzte Klassen aus. (Bsp. 1ac, 2BD, 3abc)
                         while zeichen <= klasslen:
+                            
                             try:
                                 # TODO: check if 2. oder 3. stelle ein Buchstabe und nicht eine Zahl ist
                                 # 2. oder 3. stelle nicht weiter!s
