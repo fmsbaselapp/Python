@@ -5,7 +5,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 import re
 
-cred = credentials.Certificate('ServiceAccountTest.json')
+cred = credentials.Certificate('ServiceAccount.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -26,10 +26,11 @@ schulhauslinksTest = (
     'https://display.edubs.ch/gm1',
 )
 
-for haupturl in schulhauslinksTest:  # TODO: Test entfernen
+for haupturl in schulhauslinks:  # TODO: Test entfernen
 
     a = "1"
     b = "2"
+# ======
 
     # Hier wird die Schule ausgelesen.
     session = HTMLSession()
@@ -38,7 +39,12 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
     schule = schulehtml.text
     print("""
     -----------"""+schule+"-----------""")
+    # Fromatiere schule für Target
+    schuleTarget2 = re.sub('r"|\s|"', '', schule)
+    schuleTarget = re.sub('[äöü]', '', schuleTarget2)
+    print(schuleTarget)
 
+ # ======
     anzahlausfaelle1 = r.html.text
     anzahlausfaelle1split = anzahlausfaelle1.split('\n')
     del (anzahlausfaelle1split)[0:4]
@@ -68,6 +74,7 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
         zweiteausfalltag = zweiteausfalltaghtml.text
         zweiteausfalltag1 = b + zweiteausfalltag
 
+ # ======
     # Gruppiert alle informationen in 3ergruppen = 1 ausfall ->
     # wenn zweiter ausfall true = zwei listen(zb. montag und dienstag) mit den jeweiligen ausfällen
     alleAusfälleUnsortiert = anzahlausfaelle1split
@@ -92,7 +99,7 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
         N = 3
         alleAusfälleListe1Tag = [alleAusfälleUnsortiert[n:n+N]
                                  for n in range(0, len(alleAusfälleUnsortiert), N)]
-
+# ======
     # Zählt ausfälle des 1. Tags
     anzahlerstertag = 0
     for position in anzahlausfaelle1split:
@@ -109,16 +116,17 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
         anzahl1 = 0
     else:
         anzahl1 = anzahlx
-
-    # Zählt ausfälle des 1. Tags
+# ======
+    # Zählt ausfälle des 2. Tags
     if zweiterausfall:
         anzahlzweitertag = 0
         anzahlT2 = len(zweiterTagListe) / 3
-        
-
-    #=========================================
-    #ERSTER TAG
-    #=========================================
+    else:
+        anzahlT2 = 0
+# ======
+    # =========================================
+    # ERSTER TAG
+    # =========================================
     x = 0
 
     # Liest klasse aus HTML
@@ -148,7 +156,7 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
             klassentextlen = len(klassetextsplit)
 
             anz = 0  # setzt while loop unten zurück
-            # Liest verschindene Klassen aus und unterteilt sie in eine Liste
+ # ======    # Liest verschindene Klassen aus und unterteilt sie in eine Liste
             while anz < klassentextlen:
                 try:
                     klass = klassetextsplit[anz]
@@ -163,7 +171,7 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
                         print("===> Stufe: " + klassenstufe)
 
                         zeichen = 1  # setzt while loop unten zurück
-                        # Liest zusammengesetzte Klassen aus. (Bsp. 1ac, 2BD, 3abc)
+# ======                 # Liest zusammengesetzte Klassen aus. (Bsp. 1ac, 2BD, 3abc)
                         while zeichen <= klasslen:
 
                             try:
@@ -189,15 +197,25 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
                                         else:
                                             num1 = x - 1 + zeichen
                                             num = str(num1)
+                                            individualDoc = auktellerAufall[0] + \
+                                                ' - '+num
+                                            print(ersterausfalltag+'=============================='+ individualDoc)
+                                            
+                                            # fügt 'am' hinzu bei allen wochentagen
+                                            if ersterausfalltag == 'Heute:':
+                                                tag1 = 'Ausfall '+ersterausfalltag
+                                            else:
+                                                tag1 = 'Ausfall am '+ersterausfalltag
                                             try:
                                                 db.collection(u'Nachrichten').document(u'Schulen').collection(
-                                                    schule).document(ersterausfalltag).set({
-                                                        num: {
-                                                            u'target': klassFinal,
-                                                            u'klasse': auktellerAufall[0],
-                                                            u'grund': auktellerAufall[1],
-                                                            u'raum': auktellerAufall[2],
-                                                        },
+                                                    schuleTarget2).document(individualDoc).set({
+
+                                                        u'tag': tag1,
+                                                        u'target': schuleTarget+'-'+klassFinal,
+                                                        u'klasse': auktellerAufall[0],
+                                                        u'grund': auktellerAufall[1],
+                                                        u'raum': auktellerAufall[2],
+
 
                                                     })
                                             except:
@@ -206,7 +224,7 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
                                                 print("<p>Error: %s</p>" % e)
                                 else:
                                     break
-                                   
+
                             except:
                                 break
                         anz = anz + 1
@@ -220,13 +238,14 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
             x = x + 1
         except:
             break
-    
-    #=========================================
-    #ZWEITER TAG
-    #=========================================
+# ======
+    # =========================================
+    # ZWEITER TAG
+    # =========================================
     y = 0
 
     # Liest klasse aus HTML
+
     while y < anzahlT2:
         try:
             # ----- INFOS -----# (benötigt wird: Ausfall(alle Infos), Betroffene klassen, Tag des Ausfalls)
@@ -253,7 +272,7 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
             klassentextlen = len(klassetextsplit)
 
             anz = 0  # setzt while loop unten zurück
-            # Liest verschindene Klassen aus und unterteilt sie in eine Liste
+# ======     # Liest verschindene Klassen aus und unterteilt sie in eine Liste
             while anz < klassentextlen:
                 try:
                     klass = klassetextsplit[anz]
@@ -268,16 +287,15 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
                         print("===> Stufe: " + klassenstufe)
 
                         zeichen = 1  # setzt while loop unten zurück
-                        # Liest zusammengesetzte Klassen aus. (Bsp. 1ac, 2BD, 3abc)
+# ======                 # Liest zusammengesetzte Klassen aus. (Bsp. 1ac, 2BD, 3abc)
                         while zeichen <= klasslen:
 
                             try:
-                                # TODO: check if 2. oder 3. stelle ein Buchstabe und nicht eine Zahl ist
-                                # 2. oder 3. stelle nicht weiter!s
+
                                 if klasseSauber[zeichen].isalpha():
                                     klassExtracted = klassenstufe + \
                                         klasseSauber[zeichen]
-                                    # TODO: final goal is here bring here the ausfälle!
+
                                     print(klassExtracted)
                                     zeichen = zeichen + 1
                                     klassFinal = klassExtracted.upper()
@@ -294,17 +312,28 @@ for haupturl in schulhauslinksTest:  # TODO: Test entfernen
                                         else:
                                             num1 = x + y - 1 + zeichen
                                             num = str(num1)
+                                            individualDoc = auktellerAufall[0] + \
+                                                ' - '+num
+                                            # TODO:
+                                            print(
+                                                zweiteausfalltag+'==============================' + individualDoc)
+                                            # fügt 'am' hinzu bei allen wochentagen
+                                            if zweiteausfalltag == 'Morgen:':
+                                                tag2 = 'Ausfall '+zweiteausfalltag
+                                            else:
+                                                tag2 = 'Ausfall am '+zweiteausfalltag
                                             try:
                                                 db.collection(u'Nachrichten').document(u'Schulen').collection(
-                                                    schule).document(zweiteausfalltag).set({
-                                                        num: {
-                                                            u'target': klassFinal,
-                                                            u'klasse': auktellerAufall[0],
-                                                            u'grund': auktellerAufall[1],
-                                                            u'raum': auktellerAufall[2],
-                                                        },
+                                                    schuleTarget2).document(individualDoc).set({
+                                                        u'tag': tag2,
+                                                        u'target': schuleTarget+'-'+klassFinal,
+                                                        u'klasse': auktellerAufall[0],
+                                                        u'grund': auktellerAufall[1],
+                                                        u'raum': auktellerAufall[2],
+
 
                                                     })
+                                                
                                             except:
                                                 e = sys.exc_info()[0]
 
