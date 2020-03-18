@@ -5,7 +5,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 import re
 
-cred = credentials.Certificate('/./root/Classmate/ServiceAccount.json')
+cred = credentials.Certificate('ServiceAccountTest.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -199,9 +199,8 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
                                             num = str(num1)
                                             individualDoc = auktellerAufall[0] + \
                                                 ' - '+num
-                                            print(
-                                                ersterausfalltag+'==============================' + individualDoc)
-
+                                            print(ersterausfalltag+'=============================='+ individualDoc)
+                                            
                                             # fügt 'am' hinzu bei allen wochentagen
                                             if ersterausfalltag == 'Heute:':
                                                 tag1 = 'Ausfall '+ersterausfalltag
@@ -334,7 +333,7 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
 
 
                                                     })
-
+                                                
                                             except:
                                                 e = sys.exc_info()[0]
 
