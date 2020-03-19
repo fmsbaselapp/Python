@@ -1,3 +1,5 @@
+
+
 from fake_useragent import UserAgent
 from requests_html import HTMLSession
 import firebase_admin
@@ -39,7 +41,7 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
     schule = schulehtml.text
     print("""
     -----------"""+schule+"-----------""")
-    # Fromatiere schule für Target
+    # Fromatiere schule fuer Target
     schuleTarget2 = re.sub('r"|\s|"', '', schule)
     schuleTarget = re.sub('[äöü]', '', schuleTarget2)
     print(schuleTarget)
@@ -76,31 +78,31 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
 
  # ======
     # Gruppiert alle informationen in 3ergruppen = 1 ausfall ->
-    # wenn zweiter ausfall true = zwei listen(zb. montag und dienstag) mit den jeweiligen ausfällen
-    alleAusfälleUnsortiert = anzahlausfaelle1split
+    # wenn zweiter ausfall true = zwei listen(zb. montag und dienstag) mit den jeweiligen ausfaellen
+    alleAusfaelleUnsortiert = anzahlausfaelle1split
     if zweiterausfall:
-        # splittet alle ausfälle in 2 listen bei zweitem tag
-        splitIndex = alleAusfälleUnsortiert.index(zweiteausfalltag)
-        ersterTagListe, zweiterTagListeDirty = alleAusfälleUnsortiert[
-            :splitIndex], alleAusfälleUnsortiert[splitIndex+1:]
+        # splittet alle ausfaelle in 2 listen bei zweitem tag
+        splitIndex = alleAusfaelleUnsortiert.index(zweiteausfalltag)
+        ersterTagListe, zweiterTagListeDirty = alleAusfaelleUnsortiert[
+            :splitIndex], alleAusfaelleUnsortiert[splitIndex+1:]
 
-        # splittet zweiten tag bei anlässe
-        anlässeSplit = zweiterTagListeDirty.index('Anlässe')
-        zweiterTagListe = zweiterTagListeDirty[:anlässeSplit]
+        # splittet zweiten tag bei anlaesse
+        anlaesseSplit = zweiterTagListeDirty.index('Anlässe')
+        zweiterTagListe = zweiterTagListeDirty[:anlaesseSplit]
 
         # in 3er gruppen sortieren
         N = 3
-        alleAusfälleListe1Tag = [ersterTagListe[n:n+N]
-                                 for n in range(0, len(ersterTagListe), N)]
+        alleAusfaelleListe1Tag = [ersterTagListe[n:n+N]
+                                  for n in range(0, len(ersterTagListe), N)]
 
-        alleAusfälleListe2Tag = [zweiterTagListe[n:n+N]
-                                 for n in range(0, len(zweiterTagListe), N)]
+        alleAusfaelleListe2Tag = [zweiterTagListe[n:n+N]
+                                  for n in range(0, len(zweiterTagListe), N)]
     else:
         N = 3
-        alleAusfälleListe1Tag = [alleAusfälleUnsortiert[n:n+N]
-                                 for n in range(0, len(alleAusfälleUnsortiert), N)]
+        alleAusfaelleListe1Tag = [alleAusfaelleUnsortiert[n:n+N]
+                                  for n in range(0, len(alleAusfaelleUnsortiert), N)]
 # ======
-    # Zählt ausfälle des 1. Tags
+    # Zaehlt ausfaelle des 1. Tags
     anzahlerstertag = 0
     for position in anzahlausfaelle1split:
         if position == zweiteausfalltag:
@@ -117,7 +119,7 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
     else:
         anzahl1 = anzahlx
 # ======
-    # Zählt ausfälle des 2. Tags
+    # Zaehlt ausfaelle des 2. Tags
     if zweiterausfall:
         anzahlzweitertag = 0
         anzahlT2 = len(zweiterTagListe) / 3
@@ -132,15 +134,15 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
     # Liest klasse aus HTML
     while x < anzahl1:
         try:
-            # ----- INFOS -----# (benötigt wird: Ausfall(alle Infos), Betroffene klassen, Tag des Ausfalls)
+            # ----- INFOS -----# (benoetigt wird: Ausfall(alle Infos), Betroffene klassen, Tag des Ausfalls)
 
             # SCHULHAUS das bearbeitet wird
             # print(schule)
 
             # AUSFALL der bearbeitet wird (alle infos)
             print('\n')
-            print(alleAusfälleListe1Tag[x])
-            auktellerAufall = alleAusfälleListe1Tag[x]
+            print(alleAusfaelleListe1Tag[x])
+            auktellerAufall = alleAusfaelleListe1Tag[x]
 
             # TAG des Ausfalls
             # print(ersterausfalltag1)
@@ -155,7 +157,7 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
 
             klassentextlen = len(klassetextsplit)
 
-            anz = 0  # setzt while loop unten zurück
+            anz = 0  # setzt while loop unten zurueck
  # ======    # Liest verschindene Klassen aus und unterteilt sie in eine Liste
             while anz < klassentextlen:
                 try:
@@ -170,7 +172,7 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
 
                         print("===> Stufe: " + klassenstufe)
 
-                        zeichen = 1  # setzt while loop unten zurück
+                        zeichen = 1  # setzt while loop unten zurueck
 # ======                 # Liest zusammengesetzte Klassen aus. (Bsp. 1ac, 2BD, 3abc)
                         while zeichen <= klasslen:
 
@@ -180,7 +182,7 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
                                 if klasseSauber[zeichen].isalpha():
                                     klassExtracted = klassenstufe + \
                                         klasseSauber[zeichen]
-                                    # TODO: final goal is here bring here the ausfälle!
+                                    # TODO: final goal is here bring here the ausfaelle!
                                     print(klassExtracted)
                                     zeichen = zeichen + 1
                                     klassFinal = klassExtracted.upper()
@@ -199,10 +201,9 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
                                             num = str(num1)
                                             individualDoc = auktellerAufall[0] + \
                                                 ' - '+num
-                                            print(
-                                                ersterausfalltag+'==============================' + individualDoc)
+                                            print(ersterausfalltag+'=============================='+ individualDoc)
 
-                                            # fügt 'am' hinzu bei allen wochentagen
+                                            # fuegt 'am' hinzu bei allen wochentagen
                                             if ersterausfalltag == 'Heute:':
                                                 tag1 = 'Ausfall '+ersterausfalltag
                                             else:
@@ -221,7 +222,7 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
                                                     })
                                             except:
                                                 e = sys.exc_info()[0]
-
+                                               
                                                 print("<p>Error: %s</p>" % e)
                                 else:
                                     break
@@ -249,15 +250,14 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
 
     while y < anzahlT2:
         try:
-            # ----- INFOS -----# (benötigt wird: Ausfall(alle Infos), Betroffene klassen, Tag des Ausfalls)
+            # ----- INFOS -----# (benoetigt wird: Ausfall(alle Infos), Betroffene klassen, Tag des Ausfalls)
 
             # SCHULHAUS das bearbeitet wird
             # print(schule)
 
             # AUSFALL der bearbeitet wird (alle infos)
-            print('\n')
-            print(alleAusfälleListe2Tag[y])
-            auktellerAufall = alleAusfälleListe2Tag[y]
+
+            auktellerAufall = alleAusfaelleListe2Tag[y]
 
             # TAG des Ausfalls
             # print(ersterausfalltag1)
@@ -272,22 +272,19 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
 
             klassentextlen = len(klassetextsplit)
 
-            anz = 0  # setzt while loop unten zurück
+            anz = 0  # setzt while loop unten zurueck
 # ======     # Liest verschindene Klassen aus und unterteilt sie in eine Liste
             while anz < klassentextlen:
                 try:
                     klass = klassetextsplit[anz]
                     klasseSauber = klass.replace(':', '')
-                    print("===> Klasse: " + klasseSauber)
 
                     klasslen = len(klasseSauber)
                     klassenstufe = klass[0]
 
                     if klassenstufe.isdigit():
 
-                        print("===> Stufe: " + klassenstufe)
-
-                        zeichen = 1  # setzt while loop unten zurück
+                        zeichen = 1  # setzt while loop unten zurueck
 # ======                 # Liest zusammengesetzte Klassen aus. (Bsp. 1ac, 2BD, 3abc)
                         while zeichen <= klasslen:
 
@@ -297,11 +294,8 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
                                     klassExtracted = klassenstufe + \
                                         klasseSauber[zeichen]
 
-                                    print(klassExtracted)
                                     zeichen = zeichen + 1
                                     klassFinal = klassExtracted.upper()
-                                    print('\n'+schule+'\n'+zweiteausfalltag+'\n'+klassFinal +
-                                          '\n'+auktellerAufall[0]+'\n'+auktellerAufall[1]+'\n'+auktellerAufall[2]+'\n')
 
                                     if klassetext == "Keine Anlässe":
                                         break
@@ -316,9 +310,8 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
                                             individualDoc = auktellerAufall[0] + \
                                                 ' - '+num
                                             # TODO:
-                                            print(
-                                                zweiteausfalltag+'==============================' + individualDoc)
-                                            # fügt 'am' hinzu bei allen wochentagen
+
+                                            # fuegt 'am' hinzu bei allen wochentagen
                                             if zweiteausfalltag == 'Morgen:':
                                                 tag2 = 'Ausfall '+zweiteausfalltag
                                             else:
@@ -338,14 +331,13 @@ for haupturl in schulhauslinks:  # TODO: Test entfernen
                                             except:
                                                 e = sys.exc_info()[0]
 
-                                                print("<p>Error: %s</p>" % e)
                                 else:
                                     break
                             except:
                                 break
                         anz = anz + 1
                     else:
-                        print("Keine Stufe erkannt!")
+
                         anz = anz + 1
 
                 except:
